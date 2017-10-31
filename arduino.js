@@ -38,8 +38,7 @@ class ArduinoStream extends Duplex {
     SerialPort.list((err, ports) => {
       if (err) return cb(err);
 
-      let port = find(ports, p => p && p.pnpId && p.pnpId.match(this.identifier));
-      console.log(`Port: ${port.pnpId}`);
+      let port = find(ports, p => p.pnpId && p.pnpId.match(this.identifier));
 
       return cb(null, port);
     });
