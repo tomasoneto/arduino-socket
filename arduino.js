@@ -50,8 +50,10 @@ class ArduinoStream extends Duplex {
   _write(chunk, encoding, callback) {
     if (typeof chunk === 'string') chunk = Buffer.from(chunk, encoding);
 
-    this.serialport.write(chunk);
-    this.serialport.drain(callback);
+    if (this.serialport) {
+      this.serialport.write(chunk);
+      this.serialport.drain(callback);
+    }
   }
 
   // chunks <Array> The chunks to be written. Each chunk has following format: { chunk: ..., encoding: ... }.
