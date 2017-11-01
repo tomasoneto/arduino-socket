@@ -26,7 +26,10 @@ class ArduinoServer {
     io.on('connection', socket => {
       if (io.arduino.connected) socket.emit('arduino connected');
 
-      socket.on('data', data => io.arduino.write(data));
+      socket.on('data', data => {
+        console.log('socket:', data, Buffer.from(data, 'hex'));
+        io.arduino.write(Buffer.from(data, 'hex'));
+      });
       socket.on('close', err => console.log(err, 'Client closed connection'));
       socket.on('error', err => console.log(err));
       socket.on('disconnect', (err) => console.log('user disconnected', err));

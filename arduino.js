@@ -8,13 +8,6 @@ class ArduinoStream extends Duplex {
   constructor(options) {
     super(options);
     this.identifier = get(options, 'identifier', /arduino/i);
-
-    this.on('pipe', src => {
-      src.on('end', () => this.push(null));
-      src.on('close', (err) => this.emit('close', err));
-      src.on('error', (err) => this.emit('error', err));
-      src.on('open', () => this.emit('open'));
-    });
   }
 
   connect(cb) {
@@ -26,7 +19,11 @@ class ArduinoStream extends Duplex {
       if (port) {
         clearInterval(interval);
         this.serialport = new SerialPort(port.comName, { baudRate: 9600 });
-        this.serialport.pipe(this);
+        this.serialport.on('data', data => this.emit('data', data));
+        this.serialport.on('end', () => this.push(null));
+        this.serialport.on('close', (err) => this.emit('close', err));
+        this.serialport.on('error', (err) => this.emit('error', err));
+        this.serialport.on('open', () => this.emit('open'));
         return cb();
       }
     });
